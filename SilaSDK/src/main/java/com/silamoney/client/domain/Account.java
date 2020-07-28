@@ -38,4 +38,9 @@ public class Account {
      */
     @SerializedName("account_link_status")
     public String accountListStatus;
+
+    @Override
+    public String toString() {
+        return "Account{" + "accountNumber=" + accountNumber + ", accountName=" + accountName + ", accountType=" + accountType + ", accountStatus=" + accountStatus + ", accountListStatus=" + accountListStatus + '}';
+    }
 }

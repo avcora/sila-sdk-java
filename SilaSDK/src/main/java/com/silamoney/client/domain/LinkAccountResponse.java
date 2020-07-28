@@ -16,4 +16,9 @@ public class LinkAccountResponse {
     public String getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return "LinkAccountResponse{" + "status=" + status + '}';
+    }
 }

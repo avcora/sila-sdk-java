@@ -154,9 +154,9 @@ public class SilaApi {
 	 * @throws ServerSideException
 	 * @throws ForbiddenException
 	 */
-	public ApiResponse checkKYC(String userHandle, String userPrivateKey) throws IOException, InterruptedException,
+	public ApiResponse checkKYC(String userHandle, String kycLevel, String userPrivateKey) throws IOException, InterruptedException,
 			BadRequestException, InvalidSignatureException, ServerSideException, ForbiddenException {
-		HeaderMsg body = new HeaderMsg(userHandle, this.configuration.getAuthHandle());
+		HeaderMsg body = new HeaderMsg(userHandle, kycLevel, this.configuration.getAuthHandle());
 		String path = Endpoints.CHECK_KYC.getUri();
 		String sBody = Serialization.serialize(body);
 		Map<String, String> headers = new HashMap<>();

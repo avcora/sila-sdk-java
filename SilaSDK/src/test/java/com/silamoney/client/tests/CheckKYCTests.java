@@ -40,12 +40,15 @@ public class CheckKYCTests {
             DefaultConfigurations.setUserPrivateKey(userPrivateKey);
         }
         ApiResponse response = api.checkKYC(DefaultConfigurations.getUserHandle(),
+                "DEFAULT",
                 DefaultConfigurations.getUserPrivateKey());
 
         assertEquals(200, response.getStatusCode());
         while (!((BaseResponse) response.getData()).getStatus().contains("SUCCESS")) {
             TimeUnit.SECONDS.sleep(5);
-            response = api.checkKYC(DefaultConfigurations.getUserHandle(), DefaultConfigurations.getUserPrivateKey());
+            response = api.checkKYC(DefaultConfigurations.getUserHandle(), 
+                    "DEFAULT",
+                    DefaultConfigurations.getUserPrivateKey());
         }
         assertEquals("SUCCESS", ((BaseResponse) response.getData()).getStatus());
     }
@@ -53,7 +56,7 @@ public class CheckKYCTests {
     @Test
     public void Response200Failure() throws Exception {
         // KYCID3
-        ApiResponse response = api.checkKYC(userHandle2Failure, userPrivateKeyFailure);
+        ApiResponse response = api.checkKYC(userHandle2Failure, "DEFAULT", userPrivateKeyFailure);
         assertEquals(200, response.getStatusCode());
         assertEquals("FAILURE", ((BaseResponse) response.getData()).getStatus());
     }
@@ -67,7 +70,7 @@ public class CheckKYCTests {
         if (DefaultConfigurations.getUserPrivateKey() == null) {
             DefaultConfigurations.setUserPrivateKey(userPrivateKeyFailure);
         }
-        ApiResponse response = api.checkKYC("", DefaultConfigurations.getUserPrivateKey());
+        ApiResponse response = api.checkKYC("", "DEFAULT", DefaultConfigurations.getUserPrivateKey());
         assertEquals(400, response.getStatusCode());
         // System.out.println(GsonUtils.objectToJsonStringFormato(response));
     }
@@ -85,6 +88,7 @@ public class CheckKYCTests {
                 "3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266");
 
         ApiResponse response = api.checkKYC(DefaultConfigurations.getUserHandle(),
+                "DEFAULT",
                 DefaultConfigurations.getUserPrivateKey());
         assertEquals(401, response.getStatusCode());
         // System.out.println(GsonUtils.objectToJsonStringFormato(response));

@@ -4,14 +4,17 @@ import com.google.gson.reflect.TypeToken;
 import com.silamoney.client.api.ApiResponse;
 import com.silamoney.client.domain.Account;
 import com.silamoney.client.domain.BaseResponse;
+import com.silamoney.client.domain.DataResponse;
 import com.silamoney.client.domain.GetTransactionsResponse;
 import com.silamoney.client.domain.LinkAccountResponse;
+import com.silamoney.client.domain.Message;
 import com.silamoney.client.exceptions.BadRequestException;
 import com.silamoney.client.exceptions.ForbiddenException;
 import com.silamoney.client.exceptions.InvalidSignatureException;
 import com.silamoney.client.exceptions.ServerSideException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Class to manage the different kinds of responses.
@@ -43,6 +46,8 @@ public class ResponseUtil {
         if (statusCode != 200) {
             success = false;
         }
+        
+        System.out.println("MSG: " + msg);
 
         switch (msg) {
             case "link_account_msg":
@@ -90,6 +95,25 @@ public class ResponseUtil {
                 return new ApiResponse(statusCode, response.headers().map(), getTransactionsResponse, success);
             case "SilaBalance":
                 return new ApiResponse(statusCode, response.headers().map(), response.body(), success);
+            case "header_msg":
+            case "entity_msg":
+            case "transfer_msg":
+            case "get_account_balance":
+            case "redeem_sila":
+                HashMap<String, Object> map = (HashMap<String, Object>) Serialization.deserialize(
+                        response.body().toString(), HashMap.class);
+                
+                DataResponse dataResponse = new DataResponse();
+                dataResponse.setStatus((String) map.get("status"));
+                dataResponse.setReference((String) map.get("reference"));
+                dataResponse.setMessage((String) map.get("message"));
+                dataResponse.setData(map);
+                
+                if (success && !"SUCCESS".equals(dataResponse.getStatus())) {
+                    success = false;
+                }
+                
+                return new ApiResponse(statusCode, response.headers().map(), dataResponse, success);
             default:
                 BaseResponse baseResponse = (BaseResponse) Serialization.deserialize(response.body().toString(),
                         BaseResponse.class);

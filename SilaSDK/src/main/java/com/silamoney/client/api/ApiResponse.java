@@ -62,4 +62,9 @@ public class ApiResponse {
     public boolean getSuccess() {
         return success;
     }
+
+    @Override
+    public String toString() {
+        return "ApiResponse{" + "statusCode=" + statusCode + ", data=" + data + ", success=" + success + ", headers=" + headers + '}';
+    }
 }

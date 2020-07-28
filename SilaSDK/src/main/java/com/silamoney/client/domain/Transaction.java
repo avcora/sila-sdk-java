@@ -90,4 +90,9 @@ public class Transaction {
      */
     @SerializedName("timeline")
     public List<TransactionStatus> timeline;
+
+    @Override
+    public String toString() {
+        return "Transaction{" + "userHandle=" + userHandle + ", referenceId=" + referenceId + ", transactionId=" + transactionId + ", transactionHash=" + transactionHash + ", transactionType=" + transactionType + ", silaAmount=" + silaAmount + ", bankAccountName=" + bankAccountName + ", handleAddress=" + handleAddress + ", status=" + status + ", usdStatus=" + usdStatus + ", tokenStatus=" + tokenStatus + ", created=" + created + ", lastUpdate=" + lastUpdate + ", createdEpoch=" + createdEpoch + ", lastUpdateEpoch=" + lastUpdateEpoch + ", timeline=" + timeline + '}';
+    }
 }

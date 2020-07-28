@@ -7,11 +7,11 @@ package com.silamoney.client.domain;
  */
 public class BaseResponse {
 
-    private String reference;
+    protected String reference;
 
-    private String message;
+    protected String message;
 
-    private String status;
+    protected String status;
 
     /**
      * Gets the response reference.
@@ -35,5 +35,10 @@ public class BaseResponse {
      */
     public String getStatus() {
         return status;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseResponse{" + "reference=" + reference + ", message=" + message + ", status=" + status + '}';
     }
 }
