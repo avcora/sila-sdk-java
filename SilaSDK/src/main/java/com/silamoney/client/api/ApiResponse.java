@@ -12,6 +12,8 @@ public class ApiResponse {
     private final int statusCode;
 
     private final Map<String, List<String>> headers;
+    
+    private final String body;
 
     private final Object data;
 
@@ -24,9 +26,10 @@ public class ApiResponse {
      * @param headers
      * @param data
      */
-    public ApiResponse(int statusCode, Map<String, List<String>> headers, Object data, boolean success) {
+    public ApiResponse(int statusCode, Map<String, List<String>> headers, final String body, Object data, boolean success) {
         this.statusCode = statusCode;
         this.headers = headers;
+        this.body = body;
         this.data = data;
         this.success = success;
     }
@@ -48,6 +51,14 @@ public class ApiResponse {
     }
 
     /**
+     * Gets the response body.
+     * @return
+     */
+    public String getBody() {
+        return body;
+    }
+
+    /**
      * Gets the response data.
      * @return
      */
@@ -65,6 +76,6 @@ public class ApiResponse {
 
     @Override
     public String toString() {
-        return "ApiResponse{" + "statusCode=" + statusCode + ", data=" + data + ", success=" + success + ", headers=" + headers + '}';
+        return "ApiResponse{" + "statusCode=" + statusCode + ", data=" + data + ", success=" + success + ", body=" + body + ", headers=" + headers + '}';
     }
 }

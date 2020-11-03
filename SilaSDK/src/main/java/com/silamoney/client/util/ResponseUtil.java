@@ -58,7 +58,7 @@ public class ResponseUtil {
                     success = false;
                 }
 
-                return new ApiResponse(statusCode, response.headers().map(), linkAccountResponse, success);
+                return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), linkAccountResponse, success);
             case "get_accounts_msg":
                 TypeToken<ArrayList<Account>> token = new TypeToken<ArrayList<Account>>() {};
                 try {
@@ -77,7 +77,7 @@ public class ResponseUtil {
                         }
                     }
 
-                    return new ApiResponse(statusCode, response.headers().map(), list, success);
+                    return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), list, success);
                 } catch (Exception e) {
                     BaseResponse baseResponse = (BaseResponse) Serialization.deserialize(response.body().toString(),
                             BaseResponse.class);
@@ -86,15 +86,15 @@ public class ResponseUtil {
                         success = false;
                     }
 
-                    return new ApiResponse(statusCode, response.headers().map(), baseResponse, success);
+                    return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), baseResponse, success);
                 }
             case "get_transactions_msg":
                 GetTransactionsResponse getTransactionsResponse = (GetTransactionsResponse) Serialization
                         .deserialize(response.body().toString(), GetTransactionsResponse.class);
 
-                return new ApiResponse(statusCode, response.headers().map(), getTransactionsResponse, success);
+                return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), getTransactionsResponse, success);
             case "SilaBalance":
-                return new ApiResponse(statusCode, response.headers().map(), response.body(), success);
+                return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), response.body(), success);
             case "header_msg":
             case "entity_msg":
             case "transfer_msg":
@@ -113,7 +113,16 @@ public class ResponseUtil {
                     success = false;
                 }
                 
-                return new ApiResponse(statusCode, response.headers().map(), dataResponse, success);
+                return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), dataResponse, success);
+            case "plaid_sameday_auth_msg": 
+                final HashMap<String, Object> plaidSamedayMap = (HashMap<String, Object>)Serialization.deserialize(response.body().toString(), HashMap.class);
+                final DataResponse plaidSamedayDataResponse = new DataResponse();
+                plaidSamedayDataResponse.setStatus((String)plaidSamedayMap.get("status"));
+                plaidSamedayDataResponse.setData((Object)plaidSamedayMap.get("public_token"));
+                if (success && !"SUCCESS".equals(plaidSamedayDataResponse.getStatus())) {
+                    success = false;
+                }
+                return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), (Object)plaidSamedayDataResponse, success);
             default:
                 BaseResponse baseResponse = (BaseResponse) Serialization.deserialize(response.body().toString(),
                         BaseResponse.class);
@@ -122,7 +131,7 @@ public class ResponseUtil {
                     success = false;
                 }
 
-                return new ApiResponse(statusCode, response.headers().map(), baseResponse, success);
+                return new ApiResponse(statusCode, response.headers().map(), response.body().toString(), baseResponse, success);
         }
     }
 }

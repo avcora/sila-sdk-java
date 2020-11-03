@@ -8,6 +8,7 @@ package com.silamoney.client.domain;
 public class LinkAccountResponse {
 
     private String status;
+    private String message;
 
     /**
      * Gets the response status.
@@ -17,8 +18,12 @@ public class LinkAccountResponse {
         return status;
     }
 
+    public String getMessage() {
+        return this.message;
+    }
+
     @Override
     public String toString() {
-        return "LinkAccountResponse{" + "status=" + status + '}';
+        return "LinkAccountResponse{" + "status=" + status + ", message=" + message + '}';
     }
 }
