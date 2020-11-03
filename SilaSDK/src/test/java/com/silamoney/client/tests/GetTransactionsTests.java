@@ -1,13 +1,16 @@
 package com.silamoney.client.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.*;
 
 import java.io.IOException;
 
 import com.silamoney.client.api.ApiResponse;
 import com.silamoney.client.api.SilaApi;
 import com.silamoney.client.domain.GetTransactionsResponse;
+import com.silamoney.client.domain.SearchFilters;
 import com.silamoney.client.exceptions.BadRequestException;
 import com.silamoney.client.exceptions.ForbiddenException;
 import com.silamoney.client.exceptions.InvalidSignatureException;
@@ -22,59 +25,71 @@ import org.junit.Test;
  */
 public class GetTransactionsTests {
 
-	SilaApi api = new SilaApi(DefaultConfigurations.host, DefaultConfigurations.appHandle,
-			DefaultConfigurations.privateKey);
+    SilaApi api = new SilaApi(DefaultConfigurations.host, DefaultConfigurations.appHandle,
+            DefaultConfigurations.privateKey);
 
-	String userHandle = "javasdk-893748932";
-	String userPrivateKey = "f6b5751234d4586873714066c538b9ddaa51ee5e3188a58236be1671f0be0ed3";
+    @Test
+    public void Response200() throws Exception {
+        SearchFilters filters = new SearchFilters();
+        ApiResponse response = api.getTransactions(DefaultConfigurations.getUserHandle(), filters,
+                DefaultConfigurations.getUserPrivateKey());
 
-	@Test
-	public void Response200() throws Exception {
-		// TRANSACTIONS3
-		if (DefaultConfigurations.getUserHandle() == null) {
-			DefaultConfigurations.setUserHandle(userHandle);
-		}
-		if (DefaultConfigurations.getUserPrivateKey() == null) {
-			DefaultConfigurations.setUserPrivateKey(userPrivateKey);
-		}
+        assertEquals(200, response.getStatusCode());
+        GetTransactionsResponse parsedResponse = (GetTransactionsResponse) response.getData();
+        assertTrue(parsedResponse.success);
+        assertEquals("SUCCESS", parsedResponse.status);
+        assertThat("get transactions - size", parsedResponse.transactions.size(), greaterThan(1));
+        assertThat("get transactions - user address", parsedResponse.transactions.get(0).userHandle,
+                not(isEmptyOrNullString()));
+        assertThat("get transactions - reference id", parsedResponse.transactions.get(0).referenceId,
+                not(isEmptyOrNullString()));
+        assertThat("get transactions - transaction id", parsedResponse.transactions.get(0).transactionId,
+                not(isEmptyOrNullString()));
+        assertTrue(parsedResponse.transactions.get(0).transactionHash != null);
+        assertThat("get transactions - transaction type", parsedResponse.transactions.get(0).transactionType,
+                not(isEmptyOrNullString()));
+        assertThat("get transactions - sila amount", parsedResponse.transactions.get(0).silaAmount, greaterThan(0));
+        assertThat("get transactions - status", parsedResponse.transactions.get(0).status, not(isEmptyOrNullString()));
+        assertThat("get transactions - usd status", parsedResponse.transactions.get(0).usdStatus,
+                not(isEmptyOrNullString()));
+        assertThat("get transactions - token status", parsedResponse.transactions.get(0).tokenStatus,
+                not(isEmptyOrNullString()));
+        assertThat("get transactions - created", parsedResponse.transactions.get(0).created,
+                not(isEmptyOrNullString()));
+        assertThat("get transactions - last update", parsedResponse.transactions.get(0).lastUpdate,
+                not(isEmptyOrNullString()));
+        assertThat("get transactions - created epoch", parsedResponse.transactions.get(0).createdEpoch, greaterThan(0));
+        assertThat("get transactions - last update epoch", parsedResponse.transactions.get(0).lastUpdateEpoch,
+                greaterThan(0));
+        assertTrue(parsedResponse.transactions.get(0).descriptor != null);
+        assertTrue(parsedResponse.transactions.get(0).descriptorAch != null);
+        assertTrue(parsedResponse.transactions.get(0).achName != null);
+        if (parsedResponse.transactions.get(0).transactionType.equals("transfer")) {
+            assertTrue(parsedResponse.transactions.get(0).destinationAddress != null);
+            assertTrue(parsedResponse.transactions.get(0).destinationHandle != null);
+            assertTrue(parsedResponse.transactions.get(0).handleAddress != null);
+        } else {
+            assertTrue(parsedResponse.transactions.get(0).processingType != null);
+        }
+    }
 
-		ApiResponse response = api.getTransactions(DefaultConfigurations.getUserHandle(), DefaultConfigurations.filters,
-				DefaultConfigurations.getUserPrivateKey());
+    @Test
+    public void Response400() throws Exception {
 
-		assertEquals(200, response.getStatusCode());
-		assertTrue(((GetTransactionsResponse) response.getData()).success);
-		//System.out.println(GsonUtils.objectToJsonStringFormato(response));
-	}
+        ApiResponse response = api.getTransactions("", DefaultConfigurations.filters,
+                DefaultConfigurations.getUserPrivateKey());
+        assertEquals(400, response.getStatusCode());
+    }
 
-	@Test
-	public void Response400() throws Exception {
-		if (DefaultConfigurations.getUserHandle() == null) {
-			DefaultConfigurations.setUserHandle(userHandle);
-		}
-		if (DefaultConfigurations.getUserPrivateKey() == null) {
-			DefaultConfigurations.setUserPrivateKey(userPrivateKey);
-		}
-		ApiResponse response = api.getTransactions("", DefaultConfigurations.filters,
-				DefaultConfigurations.getUserPrivateKey());
-		//System.out.println(GsonUtils.objectToJsonStringFormato(response));
-		assertEquals(400, response.getStatusCode());
-	}
+    @Test
+    public void Response403() throws BadRequestException, InvalidSignatureException, ServerSideException, IOException,
+            InterruptedException, ForbiddenException {
 
-	@Test
-	public void Response403() throws BadRequestException, InvalidSignatureException, ServerSideException, IOException,
-			InterruptedException, ForbiddenException {
-		if (DefaultConfigurations.getUserHandle() == null) {
-			DefaultConfigurations.setUserHandle(userHandle);
-		}
-		if (DefaultConfigurations.getUserPrivateKey() == null) {
-			DefaultConfigurations.setUserPrivateKey(userPrivateKey);
-		}
-		api = new SilaApi(DefaultConfigurations.host, DefaultConfigurations.appHandle,
-				"3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266");
+        api = new SilaApi(DefaultConfigurations.host, DefaultConfigurations.appHandle,
+                "3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266");
 
-		ApiResponse response = api.getTransactions(DefaultConfigurations.getUserHandle(), DefaultConfigurations.filters,
-				DefaultConfigurations.getUserPrivateKey());
-		//System.out.println(GsonUtils.objectToJsonStringFormato(response));
-		assertEquals(403, response.getStatusCode());
-	}
+        ApiResponse response = api.getTransactions(DefaultConfigurations.getUserHandle(), DefaultConfigurations.filters,
+                DefaultConfigurations.getUserPrivateKey());
+        assertEquals(403, response.getStatusCode());
+    }
 }

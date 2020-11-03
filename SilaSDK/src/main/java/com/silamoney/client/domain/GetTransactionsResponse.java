@@ -4,30 +4,19 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- *Object used to map the get transactions method response.
+ * Object used to map the get transactions method response.
+ * 
  * @author Karlo Lorenzana
  */
-public class GetTransactionsResponse {
+public class GetTransactionsResponse extends PaginationInformation {
     /**
      * Boolean field used for success.
      */
     @SerializedName("success")
     public Boolean success;
-    /**
-     * Integer field used for the page.
-     */
-    @SerializedName("page")
-    public Integer page;
-    /**
-     * Integer field used for the returned count.
-     */
-    @SerializedName("returned_count")
-    public Integer returnedCount;
-    /**
-     * Integer field used for the total count.
-     */
-    @SerializedName("total_count")
-    public Integer totalCount;
+
+    @SerializedName("status")
+    public String status;
     /**
      * Transactions list used for the transactions.
      */
