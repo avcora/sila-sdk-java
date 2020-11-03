@@ -1,5 +1,8 @@
 package com.silamoney.client.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Response used for the majority of endpoints.
  *
@@ -7,35 +10,19 @@ package com.silamoney.client.domain;
  */
 public class BaseResponse {
 
-    protected String reference;
+    @Getter
+    private String reference;
 
-    protected String message;
+    @Getter
+    private String message;
 
-    protected String status;
+    @Getter
+    private String status;
 
-    /**
-     * Gets the response reference.
-     * @return reference
-     */
-    public String getReference() {
-        return reference;
-    }
-
-    /**
-     * Gets the response message.
-     * @return message
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    /**
-     * Gets the response status.
-     * @return status
-     */
-    public String getStatus() {
-        return status;
-    }
+    @Getter
+    @Setter
+    private Boolean success;
+   
 
     @Override
     public String toString() {
