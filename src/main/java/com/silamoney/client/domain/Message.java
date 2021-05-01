@@ -119,7 +119,12 @@ public class Message {
         /**
          * String value for GetEntities.
          */
-        GET_ENTITIES("get_entities");
+        GET_ENTITIES("get_entities"),
+
+        /**
+         * String value for DeleteAccount.
+         */
+        DELETE_ACCOUNT("delete_account");
 
         private final String value;
 

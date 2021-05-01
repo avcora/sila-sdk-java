@@ -295,6 +295,35 @@ public class SilaApi {
     }
 
     /**
+     *
+     * @param userHandle
+     * @param accountName
+     * @param userPrivateKey
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public ApiResponse deleteAccount(String userHandle, String accountName, String userPrivateKey) throws IOException, InterruptedException {
+        String path = Endpoints.DELETE_ACCOUNT.getUri();
+
+        Map<String, Object> body = new HashMap<>();
+        Header header = new Header(userHandle, this.configuration.getAuthHandle());
+
+        body.put("header", header);
+        body.put("account_name", accountName);
+
+        String sBody = Serialization.serialize(body);
+        Map<String, String> headers = new HashMap<>();
+
+        headers.put(AUTH_SIGNATURE, EcdsaUtil.sign(sBody, this.configuration.getPrivateKey()));
+        headers.put(USER_SIGNATURE, EcdsaUtil.sign(sBody, userPrivateKey));
+
+        HttpResponse<?> response = this.configuration.getApiClient().callApi(path, headers, sBody);
+
+        return ResponseUtil.prepareResponse(response, Message.ValueEnum.DELETE_ACCOUNT.getValue());
+    }
+
+    /**
      * Gets basic bank account names linked to user handle.
      *
      * @param userHandle
